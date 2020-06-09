@@ -19,7 +19,15 @@ function activate(context) {
 	// The commandId parameter must match the command field in package.json
 	let disposable = vscode.commands.registerCommand('vsmm-ext.helloWorld', function () {
 		// The code you place here will be executed every time your command is executed
-
+		// Create and show panel
+		const panel = vscode.window.createWebviewPanel(
+			'memoryVisualizer',
+			'Memory Visualizer',
+			vscode.ViewColumn.One,
+			{}
+		  );
+		// And set its HTML content
+		panel.webview.html = getWebviewContent();
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from VSMemoryManagerExtension!');
 	});
@@ -35,3 +43,54 @@ module.exports = {
 	activate,
 	deactivate
 }
+
+function getWebviewContent() {
+	return `<!DOCTYPE html>
+  <html lang="en">
+  <head>
+	  <meta charset="UTF-8">
+	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  <title>Cat Coding</title>
+	  <style>
+	  table, th, td {
+		border: 1px solid white;
+		border-collapse: collapse;
+	  }
+	  th, td {
+		padding: 15px;
+		text-align: left;
+	  }
+	  table#t01 {
+		width: 100%;    
+		background-color: #ffffff;
+	  }
+	  </style>
+  </head>
+  <body>
+	<h1>
+		Memory Visualizer
+	</h1>
+	<table id="memory-table" class="table" style="width:60%">
+		<thead>
+			<tr>
+				<th>Space</th>
+				<th>Tag</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+		<tbody>
+		<tr>
+			<th>0xFFFF</th>
+			<th>valor1</th>
+			<th>1234</th>
+		</tr>
+	</tbody>
+	</table> 
+
+
+	<script>
+		
+	</script>
+  </body>
+  </html>`;
+  }
