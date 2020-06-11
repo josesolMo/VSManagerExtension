@@ -24,10 +24,13 @@ function activate(context) {
 			'memoryVisualizer',
 			'Memory Visualizer',
 			vscode.ViewColumn.One,
-			{}
+			{
+				enableScripts: true
+			}
 		  );
 		// And set its HTML content
 		panel.webview.html = getWebviewContent();
+		//getbody();
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from VSMemoryManagerExtension!');
 	});
@@ -60,9 +63,9 @@ function getWebviewContent() {
 		padding: 15px;
 		text-align: left;
 	  }
-	  table#t01 {
-		width: 100%;    
-		background-color: #ffffff;
+	  table#memory-table{
+		width: 70%;    
+		background-color: #9e99a9;
 	  }
 	  </style>
   </head>
@@ -70,7 +73,7 @@ function getWebviewContent() {
 	<h1>
 		Memory Visualizer
 	</h1>
-	<table id="memory-table" class="table" style="width:60%">
+	<table id="memory-table">
 		<thead>
 			<tr>
 				<th>Space</th>
@@ -78,19 +81,33 @@ function getWebviewContent() {
 				<th>Value</th>
 			</tr>
 		</thead>
-		<tbody>
+	<tbody>
 		<tr>
 			<th>0xFFFF</th>
 			<th>valor1</th>
 			<th>1234</th>
 		</tr>
 	</tbody>
-	</table> 
+	</table>
+	<h1 id="info">0</h1>
+
+	<script type="text/javascript">
+		  const memorybody = document.querySelector("#memory-table > tbody "); 
+		  const info = document.getElementById('info');
 
 
-	<script>
-		
+		  const json = JSON.parse(__dirname+'/data/memory.json', 'utf8');
+		  populateMemory(json);
+		  
+		  let count = 0;
+		  setInterval(() => {
+			counter.textContent = count++;
+		  }, 100);
+	  	
+
+		  console.log(memorybody);
 	</script>
+
   </body>
   </html>`;
   }
