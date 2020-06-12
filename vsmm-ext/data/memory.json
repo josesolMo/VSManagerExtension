@@ -1,5 +1,19 @@
-[
-    ["0xFFF1", "value2", 5678],
-    ["0xFFF2", "value3", 9101],
-    ["0xFFF3", "value4", 3421]
-]
+{
+    "updatedMemory":[
+        {
+            "address": "0xfff1",
+            "tag": "value2",
+            "data": "123"
+        },
+        {
+            "address": "0xfff2",
+            "tag": "value3",
+            "data": "456"            
+        },
+        {
+            "address": "0xfff3",
+            "tag": "value4",
+            "data": "789"            
+        }
+    ]
+}

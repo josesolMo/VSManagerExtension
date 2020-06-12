@@ -30,7 +30,7 @@ function activate(context) {
 		  );
 		// And set its HTML content
 		panel.webview.html = getWebviewContent();
-		//getbody();
+		//var newMemory = getNewMemory();
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from VSMemoryManagerExtension!');
 	});
@@ -74,40 +74,69 @@ function getWebviewContent() {
 		Memory Visualizer
 	</h1>
 	<table id="memory-table">
-		<thead>
-			<tr>
-				<th>Space</th>
-				<th>Tag</th>
-				<th>Value</th>
-			</tr>
-		</thead>
-	<tbody>
+		<tr>
+			<th>Space</th>
+			<th>Tag</th>
+			<th>Value</th>
+		</tr>
 		<tr>
 			<th>0xFFFF</th>
 			<th>valor1</th>
 			<th>1234</th>
 		</tr>
-	</tbody>
+	
 	</table>
-	<h1 id="info">0</h1>
 
-	<script type="text/javascript">
-		  const memorybody = document.querySelector("#memory-table > tbody "); 
-		  const info = document.getElementById('info');
-
-
-		  const json = JSON.parse(__dirname+'/data/memory.json', 'utf8');
-		  populateMemory(json);
+	<script>
 		  
-		  let count = 0;
-		  setInterval(() => {
-			counter.textContent = count++;
-		  }, 100);
-	  	
-
-		  console.log(memorybody);
+		`+ fillTable(getNewMemory()) +`
+		  
 	</script>
 
   </body>
   </html>`;
-  }
+}
+
+function getNewMemory(){
+	var fs = require('fs');
+	var strFile = fs.readFileSync(__dirname+"/data/memory.json", "utf8");
+	var jsFile = JSON.parse(strFile);
+
+	var result = [];
+
+	if(jsFile.updatedMemory != null){
+		for (var i=0; i<jsFile.updatedMemory.length; i++){
+			var cell = [];
+
+			cell[0] = JSON.stringify(jsFile.updatedMemory[i].address);
+			cell[1] = JSON.stringify(jsFile.updatedMemory[i].tag);
+			cell[2] = JSON.stringify(jsFile.updatedMemory[i].data);
+			
+			result.push(cell);
+		}
+	}
+	return result;
+}
+
+
+function fillTable(list){
+	var memoryBody;
+	memoryBody = `var table = document.getElementById("memory-table");`
+	
+
+	for (var i=0; i< list.length; i++){
+		memoryBody = memoryBody + 
+		`
+		var row = table.insertRow();
+		var cell1 = row.insertCell();
+		var cell2 = row.insertCell();
+		var cell3 = row.insertCell();
+		cell1.innerHTML = `+list[i][0]+`;
+		cell2.innerHTML = `+list[i][1]+`;
+		cell3.innerHTML = `+list[i][2]+`;
+		`	
+	}
+
+	console.log('The memory has been updated');
+	return memoryBody;
+}
