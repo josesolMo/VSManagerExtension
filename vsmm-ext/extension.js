@@ -55,36 +55,55 @@ function getWebviewContent() {
 	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 	  <title>Cat Coding</title>
 	  <style>
-	  table, th, td {
+
+	  .content-table {
 		border: 1px solid white;
 		border-collapse: collapse;
+		margin: 25px 0;
+		font-size: 1.5em;
+		min-width: 400px;
 	  }
-	  th, td {
-		padding: 15px;
-		text-align: left;
+
+	  .content-table thead tr{
+		  background-color: #009879;
+		  color: #ffffff;
+		  text-align: left;
+		  font-weight: bold;
 	  }
-	  table#memory-table{
-		width: 70%;    
-		background-color: #9e99a9;
+
+	  .content-table th,
+	  .content-table td{
+		  padding: 12px 15px;
 	  }
+
+	  .content-table tbody tr{
+		  border-bottom: 1px solid #666666
+	  }
+
 	  </style>
   </head>
   <body>
 	<h1>
 		Memory Visualizer
 	</h1>
-	<table id="memory-table">
-		<tr>
-			<th>Space</th>
-			<th>Tag</th>
-			<th>Value</th>
-		</tr>
-		<tr>
-			<th>0xFFFF</th>
-			<th>valor1</th>
-			<th>1234</th>
-		</tr>
-	
+	<table id="memory-table" class="content-table">
+		<thead>
+			<tr>
+				<th>Space</th>
+				<th>Type</th>
+				<th>References</th>
+				<th>Value</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th></th>
+				<th></th>
+				<th></th>
+				<th></th>				  				  
+			</tr>
+		</tbody>
+		
 	</table>
 
 	<script>
@@ -109,8 +128,9 @@ function getNewMemory(){
 			var cell = [];
 
 			cell[0] = JSON.stringify(jsFile.updatedMemory[i].address);
-			cell[1] = JSON.stringify(jsFile.updatedMemory[i].tag);
-			cell[2] = JSON.stringify(jsFile.updatedMemory[i].data);
+			cell[1] = JSON.stringify(jsFile.updatedMemory[i].type);
+			cell[2] = JSON.stringify(jsFile.updatedMemory[i].references);
+			cell[3] = JSON.stringify(jsFile.updatedMemory[i].data);
 			
 			result.push(cell);
 		}
@@ -131,9 +151,11 @@ function fillTable(list){
 		var cell1 = row.insertCell();
 		var cell2 = row.insertCell();
 		var cell3 = row.insertCell();
+		var cell4 = row.insertCell();
 		cell1.innerHTML = `+list[i][0]+`;
 		cell2.innerHTML = `+list[i][1]+`;
 		cell3.innerHTML = `+list[i][2]+`;
+		cell4.innerHTML = `+list[i][3]+`;
 		`	
 	}
 

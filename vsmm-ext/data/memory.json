@@ -2,18 +2,21 @@
     "updatedMemory":[
         {
             "address": "0xfff1",
-            "tag": "value2",
-            "data": "123"
+            "type": "bool",
+            "references": 1,
+            "data": true
         },
         {
             "address": "0xfff2",
-            "tag": "value3",
-            "data": "456"            
+            "type": "string",
+            "references": 3,
+            "data": "text"            
         },
         {
             "address": "0xfff3",
-            "tag": "value4",
-            "data": "789"            
+            "type": "int",
+            "references": 1,
+            "data": 789            
         }
     ]
 }
