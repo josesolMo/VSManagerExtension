@@ -53,7 +53,7 @@ function getWebviewContent() {
   <head>
 	  <meta charset="UTF-8">
 	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	  <title>Cat Coding</title>
+	  <title>Memory Visualizer</title>
 	  <style>
 
 	  .content-table {
@@ -77,15 +77,29 @@ function getWebviewContent() {
 	  }
 
 	  .content-table tbody tr{
-		  border-bottom: 1px solid #666666
+		  border-bottom: 1px solid #666666;
+	  }
+
+	  .content-table tbody tr:last-of-type {
+		  boder-bottom: 2px solid #666666;
 	  }
 
 	  </style>
   </head>
   <body>
-	<h1>
-		Memory Visualizer
+	<h1 id="mem-visual">
+		Memory Visualizer (Local)
 	</h1>
+
+
+	<label for="fname">Username:</label>
+	<input type="text" id="username" name="username"><br><br>
+	<label for="lname">Password:</label>
+	<input type="text" id="password" name="password"><br><br>
+	<input type="button" value="Change Memory" onClick="sendRemoteRequest()">
+
+	<hr style="border-color:#666666;">
+
 	<table id="memory-table" class="content-table">
 		<thead>
 			<tr>
@@ -109,6 +123,23 @@ function getWebviewContent() {
 	<script>
 		  
 		`+ fillTable(getNewMemory()) +`
+
+		function sendRemoteRequest(){
+			var visualizer = document.getElementById('mem-visual');
+			if (visualizer.textContent != "Memory Visualizer (Remote)"){
+
+				var username = document.getElementById('username').value;
+				var password = document.getElementById('password').value;
+
+
+
+				visualizer.textContent = "Memory Visualizer (Remote)";
+				return false;
+			}else{
+				visualizer.textContent = "Memory Visualizer (Local)";
+				return false;
+			}
+		}
 		  
 	</script>
 
@@ -161,4 +192,17 @@ function fillTable(list){
 
 	console.log('The memory has been updated');
 	return memoryBody;
+}
+
+function sendLogInfo(_username, _password){
+	var fs = require('fs');
+	var strFile = fs.readFileSync(__dirname+"/data/memory.json", "utf8");
+	var jsFile = JSON.parse(strFile);
+
+	jsFile.logInfo.username = _username;
+	jsFile.logInfo.username = _password;
+
+	console.log(jsFile);
+
+	return "Sent"
 }

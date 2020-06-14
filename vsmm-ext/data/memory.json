@@ -18,5 +18,9 @@
             "references": 1,
             "data": 789            
         }
-    ]
+    ],
+    "logInfo":{
+        "username":"",
+        "password":""
+    }
 }
