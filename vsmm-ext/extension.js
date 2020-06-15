@@ -1,6 +1,12 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 const vscode = require('vscode');
+const { userInfo } = require('os');
+var list;
+
+//Log variables
+var usrname;
+var passwrd;
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -13,6 +19,7 @@ function activate(context) {
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
 	console.log('Congratulations, your extension "vsmm-ext" is now active!');
+	//sendLogInfo("jose","0108");
 
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with  registerCommand
@@ -27,12 +34,47 @@ function activate(context) {
 			{
 				enableScripts: true
 			}
-		  );
+		);
+			
 		// And set its HTML content
-		panel.webview.html = getWebviewContent();
-		//var newMemory = getNewMemory();
+		setInterval(() =>{
+			panel.webview.html = getWebviewContent();
+		},100);
+		//mdificar();
+
+
+		// Handle messages from the webview
+		panel.webview.onDidReceiveMessage(
+			message => {
+			  switch (message.command) {
+				case 'user':
+					usrname = message.text;
+				  	vscode.window.showErrorMessage(message.text);
+					  return;
+			  }
+			  switch (message.command) {
+				case 'pass':
+					passwrd = message.text;
+					vscode.window.showErrorMessage(message.text);
+					sendLogInfo(usrname,passwrd, true);
+					return;
+			  }
+
+			  switch (message.command) {
+				case 'toLocal' :
+					//sendLogInfo("","",false);
+					vscode.window.showErrorMessage(message.text);
+					return;
+			  }
+			  
+			},
+			undefined,
+			context.subscriptions
+		);
+	
 		// Display a message box to the user
 		vscode.window.showInformationMessage('Hello World from VSMemoryManagerExtension!');
+
 	});
 
 	context.subscriptions.push(disposable);
@@ -109,12 +151,12 @@ function getWebviewContent() {
 				<th>Value</th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody id="mem-body">
 			<tr>
-				<th></th>
-				<th></th>
-				<th></th>
-				<th></th>				  				  
+				  <th></th>
+				  <th></th>
+				  <th></th>
+				  <th></th>
 			</tr>
 		</tbody>
 		
@@ -122,21 +164,30 @@ function getWebviewContent() {
 
 	<script>
 		  
-		`+ fillTable(getNewMemory()) +`
+		`+ populate() +`
+
+		const vscode = acquireVsCodeApi();
 
 		function sendRemoteRequest(){
+
+			
 			var visualizer = document.getElementById('mem-visual');
 			if (visualizer.textContent != "Memory Visualizer (Remote)"){
 
 				var username = document.getElementById('username').value;
 				var password = document.getElementById('password').value;
 
-
+				vscode.postMessage({command: 'user', text: username});
+				vscode.postMessage({command: 'pass', text: password});
 
 				visualizer.textContent = "Memory Visualizer (Remote)";
 				return false;
 			}else{
+
+				
+
 				visualizer.textContent = "Memory Visualizer (Local)";
+				
 				return false;
 			}
 		}
@@ -166,15 +217,15 @@ function getNewMemory(){
 			result.push(cell);
 		}
 	}
-	return result;
+	list = result;
 }
 
-
-function fillTable(list){
+function populate(){
+		
+	getNewMemory();
 	var memoryBody;
-	memoryBody = `var table = document.getElementById("memory-table");`
-	
-
+	memoryBody = `var table = document.getElementById("mem-body");`
+		
 	for (var i=0; i< list.length; i++){
 		memoryBody = memoryBody + 
 		`
@@ -190,19 +241,42 @@ function fillTable(list){
 		`	
 	}
 
-	console.log('The memory has been updated');
+	//console.log('The memory has been updated');
 	return memoryBody;
+
 }
 
-function sendLogInfo(_username, _password){
+
+function sendLogInfo(_username,_password,_remote){
+
+	console.log("bug");
 	var fs = require('fs');
 	var strFile = fs.readFileSync(__dirname+"/data/memory.json", "utf8");
 	var jsFile = JSON.parse(strFile);
 
 	jsFile.logInfo.username = _username;
-	jsFile.logInfo.username = _password;
+	jsFile.logInfo.password = _password;
+	jsFile.logInfo.remote = _remote;
+
+	fs.writeFileSync(__dirname+"/data/memory.json", JSON.stringify(jsFile));
+
+	strFile = fs.readFileSync(__dirname+"/data/memory.json", "utf8");
+	jsFile = JSON.parse(strFile);
 
 	console.log(jsFile);
 
-	return "Sent"
+	return;
+}
+
+function mdificar(){
+	var fs = require('fs');
+	var strFile = fs.readFileSync(__dirname+"/data/memory.json", "utf8");
+	var jsFile = JSON.parse(strFile);
+
+	var cont = 1;
+	setInterval(()=>{
+		jsFile.updatedMemory[0].address = cont;
+		fs.writeFileSync(__dirname+"/data/memory.json", JSON.stringify(jsFile));
+		cont++;
+	},100);
 }
